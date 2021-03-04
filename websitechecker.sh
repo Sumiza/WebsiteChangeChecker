@@ -2,11 +2,14 @@
 
 websites=(
 www.example.com
+www.example2.cp,
 )
 
 function sayit {
-        #---contact api goes here --
         echo "$site""$1"
+        #---contact api goes here --
+        ./mailjetapi.sh "from@example.com" "Website Change Checker" "Website $site Changed" "$site $1" "to@example.com"
+        #----------------------
 }
 
 for site in "${websites[@]}"; do
