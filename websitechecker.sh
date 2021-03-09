@@ -8,7 +8,7 @@ www.example2.com
 function sayit {
         echo "$site""$1"
         #---contact api goes here --
-        ./mailjetapi.sh "from@example.com" "Website Change Checker" "Website $site Changed" "$site $1" "to@example.com"
+        ./mailapi.sh "from@example.com" "Website Change Checker" "Website $site Changed" "$site $1" "to@example.com"
         #----------------------
 }
 
