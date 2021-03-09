@@ -2,7 +2,7 @@
 
 websites=(
 www.example.com
-www.example2.cp,
+www.example2.com
 )
 
 function sayit {
@@ -14,14 +14,15 @@ function sayit {
 
 for site in "${websites[@]}"; do
         newsite=$(lynx -dump "$site")
-        oldsite=$(cat "$site.local" 2>/dev/null) 
+        site=$(echo "$site" | tr -d '/')
+        oldsite=$(cat "$site.local" 2>/dev/null)
         if [ "$newsite" != "$oldsite" ]; then
                 if [ "$oldsite" = "" ] && [ "$newsite" != "" ]; then
                         sayit " - is online"
                 elif [ "$newsite" = "" ] && [ "$oldsite" != "" ]; then
                         sayit " - is offline"
                 else
-                        difference=$(diff -B <(echo "$newsite") <(echo "$oldsite"))
+                        difference=$(diff -bBwy  --suppress-common-lines <(echo "$newsite") <(echo "$oldsite"))
                         sayit " - $difference"
                 fi
                 echo "$newsite" > "$site.local"
