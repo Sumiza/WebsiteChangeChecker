@@ -12,19 +12,19 @@ function sayit {
         #----------------------
 }
 
-for site in "${websites[@]}"; do
-        newsite=$(lynx -dump "$site")
-        site=$(echo "$site" | tr -d '/')
-        oldsite=$(cat "$site.local" 2>/dev/null)
-        if [ "$newsite" != "$oldsite" ]; then
-                if [ "$oldsite" = "" ] && [ "$newsite" != "" ]; then
-                        sayit " - is online"
-                elif [ "$newsite" = "" ] && [ "$oldsite" != "" ]; then
-                        sayit " - is offline"
-                else
-                        difference=$(diff -bBwy  --suppress-common-lines <(echo "$newsite") <(echo "$oldsite"))
-                        sayit " - $difference"
+if ping -q -w 1 -c 1 1.1.1.1 &>/dev/null || ping -q -w 1 -c 1 8.8.8.8 &>/dev/null; then
+        for site in "${websites[@]}"; do
+                newsite=$(lynx -dump "$site" | sed 's/\[.*\]//g')
+                site=$(echo "$site" | tr -d '/')
+                oldsite=$(cat "$site.local" 2>/dev/null)
+                if [ "$newsite" != "$oldsite" ] && [ "$newsite" != "" ]; then
+                        if [ "$oldsite" = "" ]; then
+                                sayit " - Added"
+                        else
+                                difference=$(diff -bBwy  --suppress-common-lines <(echo "$newsite") <(echo "$oldsite"))
+                                sayit "$difference"
+                        fi
+                        echo "$newsite" > "$site.local"
                 fi
-                echo "$newsite" > "$site.local"
-        fi
-done
+        done
+fi
